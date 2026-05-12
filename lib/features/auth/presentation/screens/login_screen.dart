@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_logo.dart';
@@ -9,15 +8,6 @@ import '../../../../core/widgets/app_primary_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 
 /// Login screen — entry point for returning users.
-///
-/// Features (per the project spec):
-/// - Email + Password login
-/// - "Forgot Password" link
-/// - "Sign up" link
-/// - Social logins: Google, Phone OTP
-///
-/// In Step 4, the `_handleLogin` method will call FirebaseAuth.
-/// For now, it just shows a placeholder snackbar.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -40,42 +30,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
-
-    // TODO: Replace with FirebaseAuth login in Step 4
     await Future.delayed(const Duration(seconds: 1));
-
     if (!mounted) return;
-
     setState(() => _isLoading = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Login logic will be added in Step 4 (Firebase)'),
-      ),
+      const SnackBar(content: Text('Backend integration not part of UI scope')),
     );
   }
 
   String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your email';
-    }
+    if (value == null || value.isEmpty) return 'Please enter your email';
     final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
-    }
+    if (!emailRegex.hasMatch(value)) return 'Please enter a valid email';
     return null;
   }
 
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your password';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
+    if (value == null || value.isEmpty) return 'Please enter your password';
+    if (value.length < 6) return 'Password must be at least 6 characters';
     return null;
+  }
+
+  void _showPlaceholder(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -90,10 +71,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 32),
-                const Center(child: AppLogo(size: 48, showTagline: false)),
+                const Center(
+                  child: AppLogo(
+                    size: 80,
+                    showTagline: false,
+                    showText: false,
+                  ),
+                ),
                 const SizedBox(height: 40),
                 Text(
-                  'Welcome Back, Speed Demon!',
+                  'WELCOME BACK',
                   style: AppTextStyles.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -104,6 +91,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
+
+                // Form fields
                 AppTextField(
                   label: 'Email',
                   hint: 'rider@example.com',
@@ -127,27 +116,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onSubmitted: (_) => _handleLogin(),
                 ),
                 const SizedBox(height: 12),
+
+                // Forgot password — subtle, not orange
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      // TODO: Member 3 will route to forgot password screen
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Forgot password screen coming soon'),
-                        ),
-                      );
-                    },
-                    child: const Text('Forgot Password?'),
+                    onPressed: () => _showPlaceholder('Forgot password screen coming soon'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    ),
+                    child: Text(
+                      'Forgot Password?',
+                      style: AppTextStyles.labelMedium.copyWith(
+                        color: AppColors.textSecondary,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
+
+                // Primary CTA
                 AppPrimaryButton(
                   label: 'Sign In',
                   isLoading: _isLoading,
                   onPressed: _handleLogin,
                 ),
                 const SizedBox(height: 32),
+
+                // Divider with "OR"
                 Row(
                   children: [
                     const Expanded(child: Divider()),
@@ -157,6 +155,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         'OR',
                         style: AppTextStyles.labelMedium.copyWith(
                           color: AppColors.textTertiary,
+                          letterSpacing: 2,
                         ),
                       ),
                     ),
@@ -164,32 +163,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                AppSecondaryButton(
+
+                // Social logins — neutral dark, brand-colored icons only
+                AppDarkButton(
                   label: 'Continue with Google',
-                  icon: Icons.g_mobiledata,
-                  onPressed: () {
-                    // TODO: Member 3 will implement Google sign-in
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Google sign-in coming in Step 4'),
-                      ),
-                    );
-                  },
+                  icon: Icons.g_mobiledata_rounded,
+                  iconColor: const Color(0xFFEA4335), // Google red
+                  onPressed: () => _showPlaceholder('Google sign-in screen coming soon'),
                 ),
                 const SizedBox(height: 12),
-                AppSecondaryButton(
+                AppDarkButton(
                   label: 'Continue with Phone',
                   icon: Icons.phone_outlined,
-                  onPressed: () {
-                    // TODO: Member 3 will implement OTP login
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Phone OTP login coming in Step 4'),
-                      ),
-                    );
-                  },
+                  iconColor: AppColors.primaryNeon,
+                  onPressed: () => _showPlaceholder('Phone OTP screen coming soon'),
                 ),
                 const SizedBox(height: 32),
+
+                // Sign up link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -197,16 +188,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       "Don't have an account? ",
                       style: AppTextStyles.bodyMedium,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Member 2 will route to signup
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Signup screen coming soon'),
-                          ),
-                        );
-                      },
-                      child: const Text('Sign Up'),
+                    GestureDetector(
+                      onTap: () => _showPlaceholder('Signup screen coming soon'),
+                      child: Text(
+                        'Sign Up',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.primaryNeon,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ],
                 ),

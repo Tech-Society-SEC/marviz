@@ -87,7 +87,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               opacity: _fadeAnimation.value,
               child: Transform.scale(
                 scale: _scaleAnimation.value,
-                child: const AppLogo(),
+                child: const AppLogo(size: 140),
               ),
             );
           },
