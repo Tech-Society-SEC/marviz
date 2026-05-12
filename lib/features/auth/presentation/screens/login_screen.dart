@@ -93,7 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const Center(child: AppLogo(size: 48, showTagline: false)),
                 const SizedBox(height: 40),
                 Text(
-                  'Welcome Back, Rider',
+                  'Welcome Back, Speed Demon!',
                   style: AppTextStyles.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
