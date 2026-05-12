@@ -1,0 +1,37 @@
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+.cxx/
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/to/reference-keystore
+key.properties
+**/*.keystore
+**/*.jks
+# Firebase configuration files - NEVER commit to public repos
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+.env.development
+
+# Generated Dart files
+*.g.dart
+*.freezed.dart
+*.config.dart
+
+# Local development overrides
+local.properties
+keystore.properties
+
+# API keys and credentials
+secrets.dart
+api_keys.dart
