@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/app_primary_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/routing/app_routes.dart';
 
 /// Login screen — entry point for returning users.
 class LoginScreen extends ConsumerStatefulWidget {
@@ -121,7 +123,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () => _showPlaceholder('Forgot password screen coming soon'),
+                    onPressed: () => context.go(AppRoutes.forgotPassword),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.textSecondary,
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -176,7 +178,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   label: 'Continue with Phone',
                   icon: Icons.phone_outlined,
                   iconColor: AppColors.primaryNeon,
-                  onPressed: () => _showPlaceholder('Phone OTP screen coming soon'),
+                  onPressed: () => context.go(AppRoutes.otpVerification),
                 ),
                 const SizedBox(height: 32),
 
@@ -189,7 +191,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: AppTextStyles.bodyMedium,
                     ),
                     GestureDetector(
-                      onTap: () => _showPlaceholder('Signup screen coming soon'),
+                      onTap: () => context.go(AppRoutes.signup),
                       child: Text(
                         'Sign Up',
                         style: AppTextStyles.bodyMedium.copyWith(

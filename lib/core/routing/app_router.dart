@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
+import '../../features/auth/presentation/screens/forgot_password_screen.dart';
+import '../../features/auth/presentation/screens/otp_verification_screen.dart';
 import 'app_routes.dart';
 
 /// MARVIZ AI's router configuration.
@@ -29,12 +32,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
+        path: AppRoutes.signup,
+        name: 'signup',
+        builder: (context, state) => const SignupScreen(),
+      ),
+      
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        name: 'forgotPassword',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.otpVerification,
+        name: 'otpVerification',
+        builder: (context, state) => const OtpVerificationScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomeScreen(),
       ),
-      // TODO: Member 2 will add signup route here
-      // TODO: Member 3 will add OTP and forgot-password routes here
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
