@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
+// Basic Flutter widget test for MARVIZ AI.
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// This test verifies that the app boots without errors and the
+// splash screen shows the MARVIZ AI brand name.
 
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:marviz_ai/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('MARVIZ AI app boots and shows splash logo', (WidgetTester tester) async {
+    // Build the app wrapped in ProviderScope (required for Riverpod).
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MarvizApp(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Pump once to render the first frame (splash screen).
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the brand name is visible on the splash screen.
+    expect(find.text('MARVIZ AI'), findsOneWidget);
+
+    // Let all pending timers and animations complete so the test
+    // tears down cleanly. This drains:
+    // - The splash screen's animation controller
+    // - The 500ms simulated auth check
+    // - The 2s splash duration delay
+    // - Any router transition timers
+    await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }
