@@ -52,22 +52,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _initializeApp() async {
-    // Check auth status (stubbed for now)
-    await ref.read(authStateProvider.notifier).checkAuthStatus();
+  // Wait for splash duration (so user sees the logo)
+  await Future.delayed(AppConstants.splashDuration);
 
-    // Wait for splash duration (so user sees the logo)
-    await Future.delayed(AppConstants.splashDuration);
+  if (!mounted) return;
 
-    if (!mounted) return;
+  // Check Firebase auth state
+  final authRepo = ref.read(authRepositoryProvider);
+  final currentUser = authRepo.currentUser;
 
-    // Route based on auth state
-    final authStatus = ref.read(authStateProvider);
-    if (authStatus == AuthStatus.authenticated) {
-      context.go(AppRoutes.home);
-    } else {
-      context.go(AppRoutes.login);
-    }
+  if (currentUser != null) {
+    // User is already signed in — go to home
+    context.go(AppRoutes.home);
+  } else {
+    // Not signed in — go to login
+    context.go(AppRoutes.login);
   }
+}
 
   @override
   void dispose() {

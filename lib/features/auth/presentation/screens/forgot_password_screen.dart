@@ -7,6 +7,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_primary_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../providers/auth_state_provider.dart';
 
 /// Forgot Password screen — sends a password reset link to the user's email.
 ///
@@ -33,15 +35,30 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   }
 
   Future<void> _handleSendResetLink() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 1200));
+  if (!_formKey.currentState!.validate()) return;
+
+  setState(() => _isLoading = true);
+
+  try {
+    final authRepo = ref.read(authRepositoryProvider);
+    await authRepo.sendPasswordResetEmail(_emailController.text);
+
     if (!mounted) return;
     setState(() {
       _isLoading = false;
       _isSuccess = true;
     });
+  } on AuthFailure catch (e) {
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.message),
+        backgroundColor: const Color(0xFFFF1744),
+      ),
+    );
   }
+}
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Please enter your email';

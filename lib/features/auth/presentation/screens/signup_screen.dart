@@ -9,6 +9,8 @@ import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/app_primary_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../widgets/signup_progress_bar.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../providers/auth_state_provider.dart';
 
 /// Signup screen — 2-step form for new rider registration.
 ///
@@ -75,18 +77,47 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   Future<void> _handleSignup() async {
-    if (!_step2FormKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+  if (!_step2FormKey.currentState!.validate()) return;
 
+  setState(() => _isLoading = true);
+
+  try {
+    final authRepo = ref.read(authRepositoryProvider);
+
+    await authRepo.signUpWithEmail(
+      email: _emailController.text,
+      password: _passwordController.text,
+      name: _nameController.text,
+      age: int.parse(_ageController.text),
+      phone: _phoneController.text,
+      bikeName: _bikeNameController.text,
+      bikeMileage: double.parse(_mileageController.text),
+      fuelTankCapacity: double.parse(_fuelTankController.text),
+    );
+
+    if (!mounted) return;
+
+    // Success — show confirmation and navigate to home
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Account created! (Backend not part of UI scope)'),
+        content: Text('Welcome to MARVIZ AI! Your account is ready.'),
+        backgroundColor: Color(0xFF00E676),
       ),
     );
+
+    context.go(AppRoutes.home);
+  } on AuthFailure catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.message),
+        backgroundColor: const Color(0xFFFF1744),
+      ),
+    );
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
   }
+}
 
   // ---- Validators ----
 

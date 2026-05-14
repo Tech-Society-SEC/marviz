@@ -8,6 +8,8 @@ import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/app_primary_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/routing/app_routes.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../providers/auth_state_provider.dart';
 
 /// Login screen — entry point for returning users.
 class LoginScreen extends ConsumerStatefulWidget {
@@ -31,16 +33,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+  if (!_formKey.currentState!.validate()) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Backend integration not part of UI scope')),
+  setState(() => _isLoading = true);
+
+  try {
+    final authRepo = ref.read(authRepositoryProvider);
+
+    await authRepo.signInWithEmail(
+      email: _emailController.text,
+      password: _passwordController.text,
     );
+
+    if (!mounted) return;
+
+    // Success — navigate to home
+    context.go(AppRoutes.home);
+  } on AuthFailure catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.message),
+        backgroundColor: const Color(0xFFFF1744),
+      ),
+    );
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
   }
+}
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Please enter your email';
